@@ -35,12 +35,22 @@ def to_json():
         elif:
             try:
                 im = Image.open(upload_file)
+                exif = {
+                    ExifTags.TAGS[k] : v
+                    for k, v in im.getexif().items()
+                    if k in ExifTags.TAGS
+                    }
+                metadata = str(exif)
                 sortie_json = image_josn(path)
             except:
                 return("Extension non supporté ou non existante")
 
+        with open(app.config['UPLOAD_FOLDER'] + 'metadata.txt','w') as outfile:
+            outfile.write(metadata)
+        with open(app.config['UPLOAD_FOLDER'] + 'transfo.json','w') as outfile:
+            outfile.write(sortie_json)
+
+#Manque plus que de merge et zip le tout et renvoyer 
 
 
-
-        #Voila et a partir de la je récupère et j'indentifie l extension et je fais la suite
 
