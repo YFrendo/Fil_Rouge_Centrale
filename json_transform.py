@@ -2,17 +2,20 @@ import json
 import PyPDF2
 import pandas
 import base64
+import os
 
 def txt_json(path):
-
     fichier = open(path, 'rb')
     texte = ''
     try:
         for ligne in fichier:
             texte = texte + ligne
-        sortie = json.dumps(texte)
+        json_txt = json.dumps(texte)
     except:
         return("Erreur lors de la transformation, etes vous sur que le fichier soit un fichier texte?")
+    taille = os.path.getsize(path)
+    metadata = { "taille" : taille , "MIME" = "txt"}
+    sortie = (json_txt,metadata)
     return(sortie)
 
 def pdf_json(path):
@@ -22,6 +25,7 @@ def pdf_json(path):
         read_pdf = PyPDF2.PdfFileReader(fichier)
     except:
         return("Erreur lors de la transformation, etes vous sur que le fichier soit un PDF?")
+    metadata = read_pdf.getDocumentInfo()
     number_of_pages = read_pdf.getNumPages()
     texte = ''
 
@@ -30,7 +34,8 @@ def pdf_json(path):
         page_content = page.extractText()
         texte = texte + page_content
 
-    sortie = json.dumps(texte)
+    json_pdf = json.dumps(texte)
+    sortie = (json_pdf,metadata)
     return(sortie)
 
 def csv_json(path):
@@ -38,7 +43,10 @@ def csv_json(path):
         df = pandas.read_csv(path)
     except:
         return("Erreur lors de la transformation, etes vous sur que le fichier soit un CSV?")
-    resultat = df.to_json(orient = "split")
+    taille = os.path.getsize(path)
+    metadata = { "taille" : taille , "MIME" = "txt"}
+    json_csv = df.to_json(orient = "split")
+    sortie = (json_csv,metadata)
     return(resultat)
 
 def image_json(path):

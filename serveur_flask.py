@@ -25,11 +25,13 @@ def to_json():
         path = app.config['UPLOAD_FOLDER'] + 'temporary_file'
 
         if ext == ".txt":
-            sortie_json = txt_json(path)
+            sortie_json, metadata = txt_json(path,upload_file.filename)
+            metadata["Nom fichier"] = upload_file.filename
         elif ext == ".pdf":
-            sortie_json = pdf_json(path)
+            sortie_json,metadata = pdf_json(path)
         elif ext == ".csv":
-            sortie_json = csv_json(path)
+            sortie_json,metadata = csv_json(path,upload_file.filename)
+            metadata["Nom fichier"] = upload_file.filename
         elif:
             try:
                 im = Image.open(upload_file)
