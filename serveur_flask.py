@@ -45,22 +45,22 @@ def to_json():
             sortie_json, metadata = sortie
             metadata["Nom fichier"] = upload_file.filename
         else:
-            try:
-                im = Image.open(upload_file)
-                exif = {
+            #try:
+            im = Image.open(upload_file)
+            exif = {
                     ExifTags.TAGS[k] : v
                     for k, v in im.getexif().items()
                     if k in ExifTags.TAGS
                     }
-                metadata = str(exif)
-                sortie_json = image_josn(path)
-            except:
-                return("Extension non supporté ou non existante")
+            metadata = str(exif)
+            sortie_json = image_json(path)
+            #except:
+                #return("Extension non supporté ou non existante")
 
         with open(app.config['UPLOAD_FOLDER'] + 'metadata.txt','w') as outfile:
             outfile.write(json.dumps(metadata))
         with open(app.config['UPLOAD_FOLDER'] + 'transfo.json','w') as outfile:
-            outfile.write(sortie_json)
+                outfile.write(str(sortie_json))
         shutil.make_archive('./static/outpout','zip',app.config['UPLOAD_FOLDER'])
         return send_from_directory(directory = './static/', filename = 'outpout.zip')
 

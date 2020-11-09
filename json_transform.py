@@ -41,7 +41,7 @@ def pdf_json(path):
 
 def csv_json(path):
     try:
-    df = pandas.read_csv(path,sep =';')
+        df = pandas.read_csv(path,sep =';')
     except:
         return("Erreur lors de la transformation, etes vous sur que le fichier soit un CSV?Séparateur : ;")
     taille = os.path.getsize(path)
