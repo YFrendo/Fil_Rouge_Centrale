@@ -5,7 +5,7 @@ import base64
 import os
 
 def txt_json(path):
-    fichier = open(path, 'rb')
+    fichier = open(path, 'r')
     texte = ''
     try:
         for ligne in fichier:
@@ -14,7 +14,7 @@ def txt_json(path):
     except:
         return("Erreur lors de la transformation, etes vous sur que le fichier soit un fichier texte?")
     taille = os.path.getsize(path)
-    metadata = { "taille" : taille , "MIME" = "txt"}
+    metadata = { "taille" : taille , "MIME" : "txt"}
     sortie = (json_txt,metadata)
     return(sortie)
 
@@ -44,7 +44,7 @@ def csv_json(path):
     except:
         return("Erreur lors de la transformation, etes vous sur que le fichier soit un CSV?")
     taille = os.path.getsize(path)
-    metadata = { "taille" : taille , "MIME" = "txt"}
+    metadata = { "taille" : taille , "MIME" : "txt"}
     json_csv = df.to_json(orient = "split")
     sortie = (json_csv,metadata)
     return(resultat)
