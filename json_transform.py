@@ -25,7 +25,8 @@ def pdf_json(path):
         read_pdf = PyPDF2.PdfFileReader(fichier)
     except:
         return("Erreur lors de la transformation, etes vous sur que le fichier soit un PDF?")
-    metadata = read_pdf.getDocumentInfo()
+    Docinfo = read_pdf.getDocumentInfo()
+    metadata = {"Auteur" : Docinfo.author , "Createur" : Docinfo.creator , "Sujet" : Docinfo.subject , "Titre" : Docinfo.title, "MIME" : "pdf", "taille" : os.path.getsize(path)}
     number_of_pages = read_pdf.getNumPages()
     texte = ''
 

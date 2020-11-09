@@ -37,6 +37,7 @@ def to_json():
             if isinstance(sortie,str):
                 return(sortie)
             sortie_json, metadata = sortie
+            metadata["Nom fichier"] = upload_file.filename
         elif ext == ".csv":
             sortie = csv_json(path)
             if isinstance(sortie,str):
