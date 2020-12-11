@@ -4,12 +4,32 @@ from json_transform import *
 from PIL import Image, ExifTags
 import shutil
 import json
+from flask_httpauth import HTTPBasicAuth
+
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
+
+app = Flask(__name__)
+auth = HTTPBasicAuth()
+users = {
+    "admin": "monopoly",
+        "user": "SIO2020"
+        }
 
 UPLOAD_FOLDER = './static/uploads/'
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+@auth.verify_password
+def verify_paddword(username,passeword):
+    if username in users:
+        if users[username] == passeword:
+            return True
+    return False
+
 @app.route('/upload', methods = ['GET','POST'])
+@auth.login_required
 def to_json():
 
     if not os.path.isdir(app.config['UPLOAD_FOLDER']):
@@ -63,7 +83,6 @@ def to_json():
                 outfile.write(str(sortie_json))
         shutil.make_archive('./static/outpout','zip',app.config['UPLOAD_FOLDER'])
         return send_from_directory(directory = './static/', filename = 'outpout.zip')
-
-
-
-
+if __name__ == "__main__":
+    app.secret_key = 'test'
+    app.run(ssl_context='adhoc',debug = True)
