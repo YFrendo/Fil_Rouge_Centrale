@@ -64,7 +64,6 @@ def to_json():
         shutil.make_archive('./static/outpout','zip',app.config['UPLOAD_FOLDER'])
         return send_from_directory(directory = './static/', filename = 'outpout.zip')
 
-#Manque plus que de merge et zip le tout et renvoyer 
 
 
 
