@@ -12,10 +12,9 @@ logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__)
 auth = HTTPBasicAuth()
-users = {
-    "admin": "monopoly",
-        "user": "SIO2020"
-        }
+with open('./static/pwd.json', 'r') as file: #Rajouter achage +sel
+        users = json.load(file)
+
 
 UPLOAD_FOLDER = './static/uploads/'
 app = Flask(__name__)
