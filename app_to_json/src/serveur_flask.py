@@ -1,9 +1,10 @@
-from flask import Flask, request,send_from_directory
+from flask import Flask, request,send_from_directory, after_this_request
 import os
 from json_transform import *
 from PIL import Image, ExifTags
 import shutil
 import json
+import uuid
 from flask_httpauth import HTTPBasicAuth
 import logging
 import boto3
@@ -63,17 +64,45 @@ def to_json():
             except:
                 return("Extension non supporté ou non existante",400)
 
-
+        os.remove('./static/uploads/temporary_file') #On enlève le fichier
         with open(app.config['UPLOAD_FOLDER'] + 'metadata.txt','w') as outfile:
             outfile.write(json.dumps(metadata))
         with open(app.config['UPLOAD_FOLDER'] + 'transfo.json','w') as outfile:
-                outfile.write(str(sortie_json))
-        shutil.make_archive('./static/outpout','zip',app.config['UPLOAD_FOLDER'])
+            outfile.write(str(sortie_json))
 
         s3 = boto3.client('s3')
-        with open('./static/outpout.zip', 'rb') as f:
-            s3.upload_fileobj(f, "filrouge",upload_file.filename)
+        id_dc = str(uuid.uuid4())
+        with open(app.config['UPLOAD_FOLDER'] + 'id_dos.txt' ,'w') as outfile:
+                outfile.write(id_dc)
 
-        return send_from_directory(directory = './static/', filename = 'outpout.zip'),200
+        shutil.make_archive('./static/' + id_dc,'zip',app.config['UPLOAD_FOLDER'])
+        with open('./static/' + id_dc +'.zip', 'rb') as f:
+            val = s3.upload_fileobj(f, "filrouge",id_dc)
+        if val == False:
+            id_dc = 's3fail'
+
+        @after_this_request #Après envoie on vide les fichiers temporaire
+        def remove_static(response):
+            os.remove('./static/' + id_dc + '.zip')
+            os.remove('./static/uploads/transfo.json')
+            os.remove('./static/uploads/metadata.txt')
+            return(response)
+
+        return send_from_directory(directory = './static/', filename = id_dc + '.zip'),200
+
+
+@app.route('/stockage/<id_dos>', methods = ['GET'])
+def stockage(id_dos):
+    s3 = boto3.client('s3')
+    s3.download_file("filrouge",str(id_dos),'./static/' + str(id_dos) + '.zip')
+   
+    @after_this_request
+    def remove_demande(response):
+        os.remove('./static/' + str(id_dos) + '.zip')
+        return (response)
+    return send_from_directory(directory = './static/', filename = id_dos +'.zip'),200
+
+
+
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=5000) 
