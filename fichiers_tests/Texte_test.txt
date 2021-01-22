@@ -1,3 +1,0 @@
-Voici un texte qui va me servir de test
-Il va etre traduit en format JSON puis stocké
-Souhaitons lui bonne chance!
