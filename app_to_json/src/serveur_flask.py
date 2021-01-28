@@ -1,4 +1,4 @@
-from flask import Flask, request,send_from_directory, after_this_request
+from flask import Flask, request,send_from_directory, after_this_request, make_response
 import os
 from json_transform import *
 from PIL import Image, ExifTags
@@ -6,6 +6,7 @@ import shutil
 import json
 import uuid
 from flask_httpauth import HTTPBasicAuth
+from flask_swagger_ui import get_swaggerui_blueprint
 import logging
 import boto3
 
@@ -15,6 +16,21 @@ app = Flask(__name__)
 UPLOAD_FOLDER = './static/uploads/'
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+@app.route('/static/<path:path>')
+def send_static(path):
+    return send_from_directory('static',path)
+
+SWAGGER_URL = '/swagger'
+API_URL = '/static/swagger.json'
+swaggerui_blueprint = get_swaggerui_blueprint(
+        SWAGGER_URL,
+        API_URL,
+        config={
+            'app_name' : 'Seans-Python-Flask-REST-Boilerplate'
+            }
+        )
+app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
 
 @app.route('/upload', methods = ['GET','POST'])
 def to_json():
@@ -87,21 +103,29 @@ def to_json():
             os.remove('./static/uploads/transfo.json')
             os.remove('./static/uploads/metadata.txt')
             return(response)
+        
 
-        return send_from_directory(directory = './static/', filename = id_dc + '.zip'),200
+        response = make_response( send_from_directory(directory = './static/', filename = id_dc + '.zip'))
+        response.headers['content-disposition'] = "attachment; filename=rendu.zip"
+        return response, 200
 
 
 @app.route('/stockage/<id_dos>', methods = ['GET'])
 def stockage(id_dos):
     s3 = boto3.client('s3')
-    s3.download_file("filrouge",str(id_dos),'./static/' + str(id_dos) + '.zip')
-   
+    try:
+        s3.download_file("filrouge",str(id_dos),'./static/' + str(id_dos) + '.zip')
+    except:
+        return 'No file at this ID',404
+
     @after_this_request
     def remove_demande(response):
         os.remove('./static/' + str(id_dos) + '.zip')
         return (response)
-    return send_from_directory(directory = './static/', filename = id_dos +'.zip'),200
 
+    response = make_response( send_from_directory(directory = './static/', filename = id_dos + '.zip'))
+    response.headers['content-disposition'] = "attachment; filename=rendu.zip"
+    return response, 200
 
 
 if __name__ == "__main__":

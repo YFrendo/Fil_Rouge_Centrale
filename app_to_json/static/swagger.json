@@ -1,0 +1,128 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Fil Rouge To JSON",
+    "description": "Cette API transforme des fichiers d'entré en JSON et extrait les métadatas",
+    "contact": {
+      "email": "yann.frendo@live.fr"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://virtserver.swaggerhub.com/CentraleSupelec3/Fil_Rouge/1.0.0",
+      "description": "SwaggerHub API Auto Mocking"
+    },
+    {
+      "url": "https://tojson.yaf.p2021.ajoga.fr",
+      "description": "SwaggerHub API Auto Mocking"
+    }
+  ],
+  "security": [
+    {
+      "BasicAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Users",
+      "description": "Users calls"
+    }
+  ],
+  "paths": {
+    "/upload": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "searches inventory",
+        "description": "Permet d'envoyer un fichier, retourne un zip contenant le fichier sous format JSON, les métadata et l'ID pour récupérerle zip quand on veut (automatiquement stocké en ligne  pour une durée de 1 an)\n",
+        "operationId": "searchInventory",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Renvoie un fichier zip"
+          },
+          "400": {
+            "description": "Problème dans les paramètres"
+          }
+        }
+      }
+    },
+    "/stockage/{id}": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Renvoie le zip demandé",
+        "description": "Renvoie le doccument demandé",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID du dossier",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string",
+              "format": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Renvoie un fichier zip"
+          },
+          "404": {
+            "description": "file not found"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "body": {
+        "type": "object",
+        "properties": {
+          "file": {
+            "type": "string",
+            "format": "binary"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "BasicAuth": {
+        "type": "http",
+        "scheme": "basic"
+      }
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
