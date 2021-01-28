@@ -14,10 +14,6 @@
   },
   "servers": [
     {
-      "url": "https://virtserver.swaggerhub.com/CentraleSupelec3/Fil_Rouge/1.0.0",
-      "description": "SwaggerHub API Auto Mocking"
-    },
-    {
       "url": "https://tojson.yaf.p2021.ajoga.fr",
       "description": "SwaggerHub API Auto Mocking"
     }
