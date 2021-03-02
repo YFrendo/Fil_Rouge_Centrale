@@ -4,17 +4,26 @@ services:
     build: ./app_to_json
     ports:
       - "5001:5000"
-
+    environment:
+     - AWS_PROFILE=csloginstudent
+     - AWS_SHARED_CREDENTIALS_FILE=/aws/credentials
+     - AWS_CONFIG_FILE=/aws/config
   json2:
     build: ./app_to_json
     ports:
       - "5002:5000"
-
+    environment:
+     - AWS_PROFILE=csloginstudent
+     - AWS_SHARED_CREDENTIALS_FILE=/aws/credentials
+     - AWS_CONFIG_FILE=/aws/config
   json3:
     build: ./app_to_json
     ports:
       - "5003:5000"
-
+    environment:
+     - AWS_PROFILE=csloginstudent
+     - AWS_SHARED_CREDENTIALS_FILE=/aws/credentials
+     - AWS_CONFIG_FILE=/aws/config
   nginx:
     image: nginx:latest
     ports:

@@ -1,4 +1,4 @@
-boto3
+boto3==1.17.10
 Flask==1.1.1
 Flask-HTTPAuth==4.2.0
 flask-swagger-ui
