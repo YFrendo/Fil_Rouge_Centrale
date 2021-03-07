@@ -1,38 +1,23 @@
 version: "3"
 services:
-  json1:
+  json:
     build: ./app_to_json
     ports:
-      - "5001:5000"
+      - "5001-5006:5000"
     environment:
      - AWS_PROFILE=csloginstudent
      - AWS_SHARED_CREDENTIALS_FILE=/aws/credentials
      - AWS_CONFIG_FILE=/aws/config
-  json2:
-    build: ./app_to_json
-    ports:
-      - "5002:5000"
-    environment:
-     - AWS_PROFILE=csloginstudent
-     - AWS_SHARED_CREDENTIALS_FILE=/aws/credentials
-     - AWS_CONFIG_FILE=/aws/config
-  json3:
-    build: ./app_to_json
-    ports:
-      - "5003:5000"
-    environment:
-     - AWS_PROFILE=csloginstudent
-     - AWS_SHARED_CREDENTIALS_FILE=/aws/credentials
-     - AWS_CONFIG_FILE=/aws/config
+    volumes:
+     - ./app_to_json/credentials:/aws/credentials
+     - ./app_to_json/config:/aws/config
   nginx:
     image: nginx:latest
     ports:
       - "80:80"
       - "443:443"
     depends_on:
-      - json1
-      - json2
-      - json3
+      - json
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
       - ./nginx/pwd.conf:/etc/nginx/.htpasswd
