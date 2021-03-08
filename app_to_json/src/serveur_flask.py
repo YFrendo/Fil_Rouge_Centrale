@@ -69,44 +69,33 @@ def to_json():
             metadata["Nom fichier"] = upload_file.filename
         else:
             try:
-                im = Image.open(upload_file)
-                exif = {
-                    ExifTags.TAGS[k] : v
-                    for k, v in im.getexif().items()
-                    if k in ExifTags.TAGS
-                    }
-                metadata = str(exif)
-                sortie_json = image_json(path)
+                sortie_json,metadata = image_json(path)
             except:
                 return("Extension non supporté ou non existante",400)
 
         os.remove('./static/uploads/temporary_file') #On enlève le fichier
-        with open(app.config['UPLOAD_FOLDER'] + 'metadata.txt','w') as outfile:
-            outfile.write(json.dumps(metadata))
-        with open(app.config['UPLOAD_FOLDER'] + 'transfo.json','w') as outfile:
-            outfile.write(str(sortie_json))
+        dico_sortie = {'Transfo_json':sortie_json,'Metadata':metadata}
 
         s3 = boto3.client('s3')
         id_dc = str(uuid.uuid4())
-        with open(app.config['UPLOAD_FOLDER'] + 'id_dos.txt' ,'w') as outfile:
-                outfile.write(id_dc)
 
-        shutil.make_archive('./static/' + id_dc,'zip',app.config['UPLOAD_FOLDER'])
-        with open('./static/' + id_dc +'.zip', 'rb') as f:
+        dico_sortie['ID'] = id_dc
+        with open("./static/" + str(id_dc) + ".json", "w") as file:
+                json.dump(dico_sortie, file)
+        with open('./static/' + id_dc +'.json', 'rb') as f:
             val = s3.upload_fileobj(f, "filrouge",id_dc)
         if val == False:
             id_dc = 's3fail'
+        
 
         @after_this_request #Après envoie on vide les fichiers temporaire
         def remove_static(response):
-            os.remove('./static/' + id_dc + '.zip')
-            os.remove('./static/uploads/transfo.json')
-            os.remove('./static/uploads/metadata.txt')
+            os.remove('./static/' + str(id_dc) + ".json")
             return(response)
         
 
-        response = make_response( send_from_directory(directory = './static/', filename = id_dc + '.zip'))
-        response.headers['content-disposition'] = "attachment; filename=rendu.zip"
+        response = make_response( send_from_directory(directory = './static/', filename = id_dc + '.json'))
+        #response.headers['content-disposition'] = "attachment; filename=rendu.zip"
         return response, 200
 
 

@@ -36,7 +36,7 @@
           "Users"
         ],
         "summary": "searches inventory",
-        "description": "Permet d'envoyer un fichier, retourne un zip contenant le fichier sous format JSON, les métadata et l'ID pour récupérerle zip quand on veut (automatiquement stocké en ligne  pour une durée de 1 an)\n",
+        "description": "Permet d'envoyer un fichier, retourne un JSON contenant le fichier sous format JSON, les métadata et l'ID pour récupérerle JSON quand on veut (automatiquement stocké en ligne  pour une durée de 1 an)\n",
         "operationId": "searchInventory",
         "requestBody": {
           "content": {
@@ -49,7 +49,7 @@
         },
         "responses": {
           "200": {
-            "description": "Renvoie un fichier zip"
+            "description": "Renvoie un JSON"
           },
           "400": {
             "description": "Problème dans les paramètres"
@@ -62,7 +62,7 @@
         "tags": [
           "Users"
         ],
-        "summary": "Renvoie le zip demandé",
+        "summary": "Renvoie le JSON demandé",
         "description": "Renvoie le doccument demandé",
         "parameters": [
           {
@@ -80,7 +80,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Renvoie un fichier zip"
+            "description": "Renvoie un JSON"
           },
           "404": {
             "description": "file not found"

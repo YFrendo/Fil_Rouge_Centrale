@@ -6,7 +6,7 @@ import os
 import logging
 import boto3
 from botocore.exceptions import ClientError
-
+from PIL import Image
 
 def txt_json(path):
     fichier = open(path, 'r')
@@ -60,13 +60,52 @@ def csv_json(path):
     sortie = (json_csv,metadata)
     return(sortie)
 
+def detect_labels_rekognition(path):
+    with open(path, 'rb') as f:
+        Image_bytes = f.read()
+        session = boto3.Session()
+        s3_client = session.client('rekognition')
+        response = s3_client.detect_labels(Image={'Bytes':Image_bytes},MaxLabels=10, MinConfidence=95)
+        return response
+
+
+
 def image_json(path):
-    
+    exifTag = ('DateTimeOriginal', 'DateTimeDigitized', 'Flash', 'ShutterSpeedValue',\
+                    'Software', 'ISOSpeedRatings', 'BrightnessValue', 'Make', 'Model', \
+                            'Orientation')
+
     data = {}
+    metadata = {}
     with open(path, 'rb') as file:
         img = file.read()
-    data['img'] = base64.b64encode(img)
-    return(data)
+    base64_bytes = base64.b64encode(img)
+    data['img'] = base64_bytes.decode('utf-8')
+    image = Image.open(path)
+
+    metadata['Width'] = image.size[0]
+    metadata['Height'] = image.size[1]
+    metadata['Format'] = image.format
+    
+    try:
+        for tag_id in exifdata:
+            tag = TAGS.get(tag_id,tag_id)
+            data = exifdata.get(tag_id)
+
+            if isinstace(data,bytes):
+                data = data.decode()
+
+            if tag in exifTag:
+                metadata[str(tag)] = str(data)
+    except:
+        pass
+
+    labels = detect_labels_rekognition(path)
+    Labels_dictionary = {}
+    for k in range(len(labels['Labels'])):
+        Labels_dictionary[labels['Labels'][k]['Name']] = 'Confiance de' + str(labels['Labels'][k]['Confidence'])
+        metadata['Labels detected'] = Labels_dictionary
+    return(data['img'],metadata)
 
 
 
