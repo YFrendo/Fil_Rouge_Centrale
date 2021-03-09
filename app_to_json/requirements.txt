@@ -6,7 +6,7 @@ lazr.uri==1.0.3
 numpy==1.19.4
 pandas==1.2.0
 pyOpenSSL
-Pillow==7.0.0
+Pillow==7.1.0
 PyPDF2==1.26.0
 uuid
 Werkzeug==0.16.1
