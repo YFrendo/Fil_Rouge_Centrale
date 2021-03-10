@@ -1,10 +1,11 @@
-import json
-import PyPDF2
-import pandas
 import base64
-import os
+import json
 import logging
+import os
+
 import boto3
+import pandas
+import PyPDF2
 from botocore.exceptions import ClientError
 from PIL import Image
 

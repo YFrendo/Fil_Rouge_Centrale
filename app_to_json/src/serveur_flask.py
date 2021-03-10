@@ -1,14 +1,17 @@
-from flask import Flask, request, send_from_directory, after_this_request, make_response
-import os
-from json_transform import *
-from PIL import Image, ExifTags
-import shutil
 import json
+import logging
+import os
+import shutil
 import uuid
+
+import boto3
+from flask import (Flask, after_this_request, make_response, request,
+                   send_from_directory)
 from flask_httpauth import HTTPBasicAuth
 from flask_swagger_ui import get_swaggerui_blueprint
-import logging
-import boto3
+from PIL import ExifTags, Image
+
+from json_transform import *
 
 app = Flask(__name__)
 
