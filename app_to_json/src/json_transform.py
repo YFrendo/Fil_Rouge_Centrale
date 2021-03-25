@@ -60,9 +60,9 @@ def pdf_json(path):  # Transforme un fichier PDF en JSON
     for k in range(number_of_pages):  # Permet de gérer plusieurs pages
         page = read_pdf.getPage(k)
         page_content = page.extractText()
-        texte = texte + page_content
-
-    json_pdf = json.dumps(texte)
+    
+    pdfencoded = base64.b64encode(fichier.read()).decode('utf-8')
+    json_pdf = json.dumps(pdfencoded)
     sortie = (json_pdf, metadata)  # On renvoie JSON + Metadata
     return sortie
 
@@ -141,14 +141,16 @@ def image_json(path):  # Images en JSON
                 metadata[str(tag)] = str(data)
     except:  # Si on arrive pas à les récupérer on ne fait rien et on continue
         pass
-
-    labels = detect_labels_rekognition(
-        path
-    )  # Reconnaissance d'image par AWS, si l'image à été récupéré par PIL alors il est possible de la lire avec AWS
-    Labels_dictionary = {}
-    for k in range(len(labels["Labels"])):
-        Labels_dictionary[labels["Labels"][k]["Name"]] = "Confiance de" + str(
-            labels["Labels"][k]["Confidence"]
-        )
-        metadata["Labels detected"] = Labels_dictionary
+    try:
+        labels = detect_labels_rekognition(
+            path
+        )  # Reconnaissance d'image par AWS, si l'image à été récupéré par PIL alors il est possible de la lire avec AWS et qu'elle fait moins de 5MB
+        Labels_dictionary = {}
+        for k in range(len(labels["Labels"])):
+            Labels_dictionary[labels["Labels"][k]["Name"]] = "Confiance de" + str(
+                labels["Labels"][k]["Confidence"]
+            )
+            metadata["Labels detected"] = Labels_dictionary
+    except:
+        pass
     return (data["img"], metadata)  # Json + metadata
