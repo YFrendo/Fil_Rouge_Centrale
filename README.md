@@ -32,3 +32,6 @@ Cette commande permet de récupérer le fichier JSON depuis le bucket S3:
 
 Exemple de commande:  
 ` curl -X GET "https://tojson.yaf.p2021.ajoga.fr/stockage/(ID)" -H  "accept: */*"`
+
+### Dossier Kubernetes
+Regroupe l'enssemble des fichier pour un déployement sur kubernetes, ces fichiers ont été généré avec Kompose
