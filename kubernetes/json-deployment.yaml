@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.22.0 (955b78124)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: json
+  name: json
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: json
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.22.0 (955b78124)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: json
+    spec:
+      containers:
+        - env:
+            - name: AWS_CONFIG_FILE
+              value: /aws/config
+            - name: AWS_PROFILE
+              value: csloginstudent
+            - name: AWS_SHARED_CREDENTIALS_FILE
+              value: /aws/credentials
+          image: json
+          name: json
+          ports:
+            - containerPort: 4001
+            - containerPort: 4002
+            - containerPort: 4003
+            - containerPort: 4004
+            - containerPort: 4005
+            - containerPort: 4006
+          resources: {}
+          volumeMounts:
+            - mountPath: /aws/credentials
+              name: json-claim0
+            - mountPath: /aws/config
+              name: json-claim1
+      restartPolicy: Always
+      volumes:
+        - name: json-claim0
+          persistentVolumeClaim:
+            claimName: json-claim0
+        - name: json-claim1
+          persistentVolumeClaim:
+            claimName: json-claim1
+status: {}
